@@ -47,7 +47,7 @@ func main() {
 
 	// print out the instances in the profile which have events enabled
 	data := [][]string{}
-	for _, profile := range profiles {
+	for _, profile := range profiles { // todo: goroutine
 		instances, err := getInstancesWithEvents(profile)
 		if err != nil {
 			log.Println(profile, "instances", err.Error())
@@ -80,6 +80,7 @@ func main() {
 						strconv.Itoa(i.ID),
 						i.Element.Key,
 						i.Name,
+						strconv.FormatBool(i.Disabled),
 						i.Configuration.EventVendorType,
 						i.Configuration.EventPollerRefreshInterval,
 					})
@@ -89,6 +90,7 @@ func main() {
 						strconv.Itoa(i.ID),
 						i.Element.Key,
 						i.Name,
+						strconv.FormatBool(i.Disabled),
 						i.Configuration.EventVendorType,
 						i.Configuration.EventPollerRefreshInterval,
 					})
@@ -98,12 +100,13 @@ func main() {
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	if showUsers {
-		table.SetHeader([]string{"Profile", "EMail", "ID", "Key", "Name", "EventType", "Interval"})
+		table.SetHeader([]string{"Profile", "EMail", "ID", "Key", "Name", "Disabled", "EventType", "Interval"})
 	} else {
-		table.SetHeader([]string{"Profile", "ID", "Key", "Name", "EventType", "Interval"})
+		table.SetHeader([]string{"Profile", "ID", "Key", "Name", "Disabled", "EventType", "Interval"})
 	}
-	table.SetBorder(false)
+	table.SetBorder(true)
 	table.SetAutoMergeCells(true)
+	table.SetRowLine(true)
 	table.AppendBulk(data)
 	table.Render()
 }
