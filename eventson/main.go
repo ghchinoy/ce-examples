@@ -77,8 +77,9 @@ func main() {
 					data = append(data, []string{
 						profile,
 						fmt.Sprintf("%v", userlist),
-						strconv.Itoa(i.ID),
 						i.Element.Key,
+						strconv.Itoa(i.ID),
+
 						i.Name,
 						strconv.FormatBool(i.Disabled),
 						i.Configuration.EventVendorType,
@@ -87,8 +88,9 @@ func main() {
 				} else {
 					data = append(data, []string{
 						profile,
-						strconv.Itoa(i.ID),
 						i.Element.Key,
+						strconv.Itoa(i.ID),
+
 						i.Name,
 						strconv.FormatBool(i.Disabled),
 						i.Configuration.EventVendorType,
@@ -100,9 +102,9 @@ func main() {
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	if showUsers {
-		table.SetHeader([]string{"Profile", "EMail", "ID", "Key", "Name", "Disabled", "EventType", "Interval"})
+		table.SetHeader([]string{"Profile", "EMail", "Element", "ID", "Name", "Disabled", "EventType", "Interval"})
 	} else {
-		table.SetHeader([]string{"Profile", "ID", "Key", "Name", "Disabled", "EventType", "Interval"})
+		table.SetHeader([]string{"Profile", "Element", "ID", "Name", "Disabled", "EventType", "Interval"})
 	}
 	table.SetBorder(true)
 	table.SetAutoMergeCells(true)

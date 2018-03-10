@@ -8,6 +8,8 @@ There are two flags:
 * `--filter` - this is a profile filter, only the profiles that match this flag will be displayed, ex. `--filter prod`
 * `--element` - only the elements specified in this flag will be displayed, ex `--element sfdc` will show only the Salesforce Element Instances
 
+With the output, one can the use `cectl` to enable or disable Element Instance events (`cectl instances events-enable <id> [true|false]`) or disable the Element Instance itself (`cectl instances disable <id>`) as needed.
+
 
 ```
 $ eventson
