@@ -15,11 +15,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-var profileFilter string
-var showUsers bool
+var (
+	profileFilter string
+	elementFilter string
+	showUsers     bool
+)
 
 func init() {
 	flag.StringVar(&profileFilter, "filter", "", "profile filter")
+	flag.StringVar(&elementFilter, "element", "", "element filter")
 	flag.BoolVar(&showUsers, "users", false, "show account e-mails")
 	flag.Parse()
 }
@@ -32,7 +36,14 @@ func main() {
 	allprofiles := getAllProfiles()
 	// filter profiles
 	profiles := filterList(allprofiles, profileFilter)
-	log.Printf("Querying %v/%v profiles: %s\n", len(profiles), len(allprofiles), profileFilter)
+	if profileFilter != "" {
+		log.Printf("Querying %v/%v profiles: %s\n", len(profiles), len(allprofiles), profileFilter)
+	} else {
+		log.Printf("Querying %v profiles", len(profiles))
+	}
+	if elementFilter != "" {
+		log.Printf("Filtering by Element key: %s", elementFilter)
+	}
 
 	// print out the instances in the profile which have events enabled
 	data := [][]string{}
@@ -55,6 +66,10 @@ func main() {
 				for _, user := range users {
 					userlist = append(userlist, user.EMail)
 				}
+			}
+			// filter Elements
+			if elementFilter != "" {
+				instances = filterElements(instances)
 			}
 			for _, i := range instances {
 				// conditional for user account e-mail output
@@ -91,6 +106,16 @@ func main() {
 	table.SetAutoMergeCells(true)
 	table.AppendBulk(data)
 	table.Render()
+}
+
+func filterElements(instances []ce.ElementInstance) []ce.ElementInstance {
+	var filteredInstances []ce.ElementInstance
+	for _, i := range instances {
+		if i.Element.Key == elementFilter {
+			filteredInstances = append(filteredInstances, i)
+		}
+	}
+	return filteredInstances
 }
 
 func getAllUsers(profile string) ([]ce.User, error) {
