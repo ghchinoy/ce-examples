@@ -19,11 +19,19 @@ var (
 	profileFilter string
 	elementFilter string
 	showUsers     bool
+	disableEvents bool
 )
+
+// Disable is a structure to hold Element Instances to be disabled
+type Disable struct {
+	ElementInstanceID int
+	Profile           string
+}
 
 func init() {
 	flag.StringVar(&profileFilter, "filter", "", "profile filter")
 	flag.StringVar(&elementFilter, "element", "", "element filter")
+	flag.BoolVar(&disableEvents, "disable", false, "disable events")
 	flag.BoolVar(&showUsers, "users", false, "show account e-mails")
 	flag.Parse()
 }
@@ -44,6 +52,8 @@ func main() {
 	if elementFilter != "" {
 		log.Printf("Filtering by Element key: %s", elementFilter)
 	}
+
+	var disableList []Disable
 
 	// print out the instances in the profile which have events enabled
 	data := [][]string{}
@@ -72,6 +82,7 @@ func main() {
 				instances = filterElements(instances)
 			}
 			for _, i := range instances {
+				disableList = append(disableList, Disable{i.ID, profile})
 				// conditional for user account e-mail output
 				if showUsers {
 					data = append(data, []string{
@@ -111,6 +122,35 @@ func main() {
 	table.SetRowLine(true)
 	table.AppendBulk(data)
 	table.Render()
+
+	if disableEvents {
+		disableEventsFor(disableList)
+	}
+}
+
+func disableEventsFor(list []Disable) {
+
+	for _, d := range list {
+		profile := d.Profile
+		log.Printf("Disabling instance id %v from profile %s", d.ElementInstanceID, profile)
+		base := viper.Get(profile + ".base").(string)
+		auth := fmt.Sprintf("User %s, Organization %s",
+			viper.Get(profile+".user").(string),
+			viper.Get(profile+".org").(string),
+		)
+		enable := false
+		debug := false
+		bodybytes, statuscode, _, err := ce.EnableElementInstanceEvents(base, auth, strconv.Itoa(d.ElementInstanceID), enable, debug)
+		if err != nil {
+			log.Printf("Unable to disable: %s", err.Error())
+		}
+		if statuscode != 200 {
+			log.Printf("Unable to disable: %v", statuscode)
+		}
+		var instance ce.ElementInstance
+		err = json.Unmarshal(bodybytes, &instance)
+		log.Printf("Disabled events on %s/%s", instance.Element.Key, instance.Name)
+	}
 }
 
 func filterElements(instances []ce.ElementInstance) []ce.ElementInstance {
