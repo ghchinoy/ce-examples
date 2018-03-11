@@ -82,6 +82,7 @@ func main() {
 				instances = filterElements(instances)
 			}
 			for _, i := range instances {
+				// assemble disableList
 				disableList = append(disableList, Disable{i.ID, profile})
 				// conditional for user account e-mail output
 				if showUsers {
@@ -128,8 +129,9 @@ func main() {
 	}
 }
 
+// disableEventsFor given a list of Element Instances in a Disable slice, disable events on those
+// Element Instances
 func disableEventsFor(list []Disable) {
-
 	for _, d := range list {
 		profile := d.Profile
 		log.Printf("Disabling instance id %v from profile %s", d.ElementInstanceID, profile)
@@ -163,6 +165,7 @@ func filterElements(instances []ce.ElementInstance) []ce.ElementInstance {
 	return filteredInstances
 }
 
+// getAllUsers given a profile, get all the Users in that account
 func getAllUsers(profile string) ([]ce.User, error) {
 	var users []ce.User
 	if profile == "profile" {
