@@ -1,6 +1,6 @@
 # eventson
 
-Using the existing cectl toml file (`~/.config/ce/cectl.toml`), go through all profiles available and display a table of Element Instances and what types of events are enabled.
+Using the existing [cectl](https://github.com/ghchinoy/cectl) toml file (`~/.config/ce/cectl.toml`), go through all profiles available and display a table of Element Instances and what types of events are enabled.
 
 A sample output is below.
 
