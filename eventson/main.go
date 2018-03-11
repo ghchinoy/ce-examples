@@ -149,12 +149,16 @@ func disableEventsFor(list []Disable) {
 		if statuscode != 200 {
 			log.Printf("Unable to disable: %v", statuscode)
 		}
-		var instance ce.ElementInstance
-		err = json.Unmarshal(bodybytes, &instance)
-		log.Printf("Disabled events on %s/%s", instance.Element.Key, instance.Name)
+		if statuscode == 200 {
+			var instance ce.ElementInstance
+			err = json.Unmarshal(bodybytes, &instance)
+			log.Printf("Disabled events on %s/%s", instance.Element.Key, instance.Name)
+		}
 	}
 }
 
+// filterElements returns a list of ce.ElementInstance with only the specified Element Key
+// from the flag --element
 func filterElements(instances []ce.ElementInstance) []ce.ElementInstance {
 	var filteredInstances []ce.ElementInstance
 	for _, i := range instances {
