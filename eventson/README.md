@@ -4,14 +4,6 @@ Using the existing [cectl](https://github.com/ghchinoy/cectl) toml file (`~/.con
 
 A sample output is below.
 
-There are three flags:
-* `--filter` - this is a profile filter, only the profiles that match this flag will be displayed, ex. `--filter prod`
-* `--element` - only the elements specified in this flag will be displayed, ex `--element sfdc` will show only the Salesforce Element Instances
-* `--disable` - this boolean flag determines whether the Instances will then be subject to having their events disabled after reporting, see an example below
-
-With the output, one can the use `cectl` to enable or disable Element Instance events (`cectl instances events-enable <id> [true|false]`) or disable the Element Instance itself (`cectl instances disable <id>`) as needed.
-
-
 ```
 $ eventson
 2018/03/10 11:14:59 Querying 86 profiles
@@ -34,7 +26,16 @@ $ eventson
 ...
 ```
 
-This example shows all flags in effect, disabling events after reporting:
+There are three flags:
+* `--filter` - this is a profile filter, only the profiles that match this flag will be displayed, ex. `--filter prod`
+* `--element` - only the elements specified in this flag will be displayed, ex `--element sfdc` will show only the Salesforce Element Instances
+* `--disable` - this boolean flag determines whether the Instances will then be subject to having their events disabled after reporting, see an example below
+
+Additionally, one can the use `cectl` to enable or disable Element Instance events (`cectl instances events-enable <id> [true|false]`) or disable the Element Instance itself (`cectl instances disable <id>`) as needed.
+
+
+
+This example shows all flags in effect, disabling events after reporting.
 
 ```
 $ eventson --filter prod --element sfdc --disable
