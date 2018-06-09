@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -20,6 +21,7 @@ var (
 	elementFilter string
 	showUsers     bool
 	disableEvents bool
+	configFile    string
 )
 
 // Disable is a structure to hold Element Instances to be disabled
@@ -33,6 +35,7 @@ func init() {
 	flag.StringVar(&elementFilter, "element", "", "element filter")
 	flag.BoolVar(&disableEvents, "disable", false, "disable events")
 	flag.BoolVar(&showUsers, "users", false, "show account e-mails")
+	flag.StringVar(&configFile, "config", "", "alternative config file")
 	flag.Parse()
 }
 
@@ -269,12 +272,23 @@ func getAllProfiles() []string {
 // loadConfigFile loads a toml config file
 func loadConfigFile() {
 	var cfgfile string
-	viper.SetConfigName("cectl")
-	viper.AddConfigPath(os.Getenv("HOME") + "/.config/ce")
+	if configFile != "" {
+		dir, file := filepath.Split(configFile)
+		log.Printf("Using alternate configfile: %s/%s", dir, file)
+		viper.SetConfigName(strings.Split(file, ".toml")[0])
+		viper.AddConfigPath(dir)
+	} else {
+		viper.SetConfigName("cectl")
+		viper.AddConfigPath(os.Getenv("HOME") + "/.config/ce")
+	}
+
 	if err := viper.ReadInConfig(); err == nil {
 		//fmt.Println("Using config file:", viper.ConfigFileUsed())
 		cfgfile = viper.ConfigFileUsed()
+	} else {
+		log.Println(err)
 	}
 	//fmt.Printf("%s\n", cfgfile)
 	viper.SetConfigFile(cfgfile)
+	//log.Printf(viper.ConfigFileUsed())
 }
